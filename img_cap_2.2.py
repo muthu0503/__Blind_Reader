@@ -7,7 +7,6 @@ import torch
 from PIL import Image
 import numpy as np
 import platform
-import matplotlib.pyplot as plt
 
 import warnings
 
@@ -98,43 +97,11 @@ def process_image(image_path):
     return caption_list, text_list
 
 
-
-def process_video_from_webcam():
-    cap = cv2.VideoCapture(0)
-    caption_list, text_list = [], []
-    frame_count = 0
-
-    plt.ion()  # Turn on interactive mode for live updates
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        if frame_count % 60 == 0:
-            process_frame(frame, caption_list, text_list)
-
-        frame_count += 1
-
-        # Use matplotlib to display the frame
-        plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        plt.axis('off')
-        plt.pause(0.001)  # Pause to allow the plot to update
-
-        # Break the loop on 'q' key press
-        if plt.waitforbuttonpress(0.1):  # Wait for a brief moment
-            break
-
-    cap.release()
-    plt.close()
-    return caption_list, text_list
-
-
-def main(input_path=None):
-    if input_path and input_path.endswith(('.mp4', '.avi', '.mov')):
+def main(input_path):
+    if input_path.endswith(('.mp4', '.avi', '.mov')):
         caption_list, text_list = process_video(input_path)
     else:
-        caption_list, text_list = process_video_from_webcam()
+        caption_list, text_list = process_image(input_path)
 
     caption_paragraph = ' '.join(caption_list)
     text_paragraph = ' '.join(text_list)
@@ -153,5 +120,6 @@ def main(input_path=None):
 
     convert_to_speech(final_summary)
 
-# Run with webcam input
-main()
+
+# Run with an example file path
+main("wallpaper1.jpg")  # Replace with an appropriate path
